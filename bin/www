@@ -11,7 +11,7 @@ var http = require('http');
 var https = require('https');
 
 var privateKey  = fs.readFileSync('cert/dalianpit.com.key', 'utf8');
-var certificate = fs.readFileSync('cert/dalianpit.com.cer', 'utf8');
+var certificate = fs.readFileSync('cert/dalianpit.com.pem', 'utf8');
 
 /**
  * Get port from environment and store in Express.
