@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/envelope/status', bodyparser.raw({type: 'application/xml', verify: (req, res, buf, encoding) => {
+app.use('/envelope/status', bodyparser.raw({type: "*/*", verify: (req, res, buf, encoding) => {
     console.log('----------------------Verifying------------------------');
     let verifyResult = false;
     if (req.headers['x-docusign-signature-1']) {
