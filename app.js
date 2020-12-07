@@ -1,9 +1,11 @@
+var crypto = require('crypto');
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var xmlparser = require('express-xml-bodyparser');
+var bodyparser = require('body-parser');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -15,11 +17,23 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(logger('dev'));
-app.use(express.json());
+// app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(xmlparser());
+// app.use(xmlparser());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/envelope/status', bodyparser.raw({type: 'application/xml', verify: (req, res, buf, encoding) => {
+    console.log('----------------------Verifying------------------------');
+    let verifyResult = false;
+    if (req.headers['x-docusign-signature-1']) {
+        let hmac = crypto.createHmac('sha256', 'zCRiYmEro+azMdnZWduweb4yx5jRneUtbkIDHmDqpoQ=');
+        hmac.update(buf);
+        let digest = hmac.digest('base64');
+        verifyResult = digest === req.headers['x-docusign-signature-1'];
+    }
+    console.log("Verify Result " + verifyResult);
+}}));
 
 app.use('/envelope/status', (req, res) => {
     console.log('-----------------Receive request----------------------');
@@ -27,7 +41,7 @@ app.use('/envelope/status', (req, res) => {
     console.log(JSON.stringify(req.headers));
     console.log('-----------------Header End----------------------');
     console.log('-----------------Body Start----------------------');
-    console.log(JSON.stringify(req.body));
+    console.log(JSON.stringify(new String(req.body, 'utf-8')));
     console.log('-----------------Body End----------------------');
     res.end();
 });

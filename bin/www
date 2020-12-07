@@ -10,14 +10,14 @@ var fs = require('fs');
 var http = require('http');
 var https = require('https');
 
-var privateKey  = fs.readFileSync('cert/dalianpit.com.key', 'utf8');
-var certificate = fs.readFileSync('cert/dalianpit.com.pem', 'utf8');
+var privateKey  = fs.readFileSync('cert/privkey.pem', 'utf8');
+var certificate = fs.readFileSync('cert/fullchain.pem', 'utf8');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '8443');
 app.set('port', port);
 
 /**
